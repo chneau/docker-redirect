@@ -1,18 +1,19 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
 	"os"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	redirectTo := os.Getenv("REDIRECT_TO")
-	fmt.Println("REDIRECT_TO:", redirectTo)
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		http.Redirect(w, r, redirectTo, http.StatusTemporaryRedirect)
+	println("REDIRECT_TO:", redirectTo)
+	r := gin.Default()
+	r.Any("/*_", func(c *gin.Context) {
+		c.Redirect(307, redirectTo)
 	})
-	err := http.ListenAndServe(":80", nil)
+	err := r.Run()
 	if err != nil {
 		panic(err)
 	}
